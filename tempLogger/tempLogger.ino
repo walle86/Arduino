@@ -4,6 +4,8 @@
   I only have the standard TMP36 wich comes with the Arduino Starterkit.
   The time is since Startup of the Arduino
   
+  For wiring lock at included as svg and jpg.
+  
   programmed by Stefan Wallnoefer for josephchrzempiec
   more librarys and sketches under https://github.com/walle86/
 */
@@ -19,7 +21,8 @@ float average = 0;
 float voltage = 0;
 float temperature = 0;
 float temperatureF = 0;
-float offsetVoltage = 0.5; //outputvoltage of Sensor at 0°C -> 500mV for the tmp36
+float resolution = 10; // in mV/°C
+float offsetVoltage = 500; //outputvoltage in mV of Sensor at 0°C -> 500mV for the tmp36
 
 const int chipSelectSD = 10;
 const int chipSelectMCP = 9;
@@ -73,12 +76,12 @@ void loop() {
       delay(10);
     }
     voltage = readValue / numReadings * 5.0 / 4095.0; //average of 10 reading converted into a voltage
-    temperature = (voltage - offsetVoltage) * 100;
+    temperature = (voltage - offsetVoltage/1000.0) * 1000.0 / resolution;
     temperatureF = (temperature * 1.8) + 32;
 
     Serial.print("Temperature: ");
-    Serial.print(temperatureF);
-    Serial.println("F");
+    Serial.print(temperature);
+    Serial.println("C");
     
     // open the file. note that only one file can be open at a time,
     // so you have to close this one before opening another.
